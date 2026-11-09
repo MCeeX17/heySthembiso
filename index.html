@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>For Sthembiso | From Mopeli</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Great Vibes & Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      background: #0f051d;
+    }
+    
+    .font-romantic {
+      font-family: 'Great Vibes', cursive;
+    }
+
+    /* Floating & Particle Animations */
+    @keyframes floatUp {
+      0% {
+        transform: translateY(105vh) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      10% { opacity: 0.9; }
+      90% { opacity: 0.9; }
+      100% {
+        transform: translateY(-10vh) rotate(360deg) scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    @keyframes flutter {
+      0%, 100% { transform: translateY(0px) rotate(0deg) scaleX(1); }
+      25% { transform: translateY(-15px) rotate(-10deg) scaleX(0.7); }
+      50% { transform: translateY(-25px) rotate(5deg) scaleX(1.1); }
+      75% { transform: translateY(-10px) rotate(12deg) scaleX(0.8); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 15px rgba(244, 114, 182, 0.6)); }
+      50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 25px rgba(244, 114, 182, 0.9)); }
+    }
+
+    @keyframes arrowBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    .animate-pulse-glow {
+      animation: pulseGlow 3s infinite ease-in-out;
+    }
+
+    .animate-arrow {
+      animation: arrowBounce 1.5s infinite ease-in-out;
+    }
+
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 20;
+      will-change: transform, opacity;
+    }
+
+    /* Glassmorphic card styling */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Canvas full screen background */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950 to-pink-950">
+
+  <!-- Canvas for dynamic interactive flowers and butterflies -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Ambient Light Orbs -->
+  <div class="fixed -top-32 -left-32 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed -bottom-32 -right-32 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="w-full max-w-lg px-5 py-6 z-20 relative min-h-screen flex flex-col justify-center items-center">
+
+    <!-- ==================== SPLASH SCREEN ==================== -->
+    <section id="splash-screen" class="w-full flex flex-col items-center justify-center text-center space-y-8 transition-all duration-700 opacity-100 scale-100">
+      
+      <!-- Envelope / Heart Graphic -->
+      <div class="relative flex items-center justify-center animate-pulse-glow">
+        <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-rose-500 to-pink-400 flex items-center justify-center shadow-lg shadow-rose-500/30">
+          <i data-lucide="heart" class="w-14 h-14 text-white fill-white"></i>
+        </div>
+      </div>
+
+      <!-- Main Header Titles -->
+      <div class="space-y-3">
+        <h2 class="text-pink-300/80 uppercase tracking-widest text-xs font-semibold">A Special Message</h2>
+        <h1 class="font-romantic text-6xl md:text-7xl text-pink-200 drop-shadow-md leading-tight">
+          To: Sthembiso
+        </h1>
+        <p class="text-purple-200/90 text-lg font-light tracking-wide">
+          From: <span class="font-semibold text-rose-300">Mopeli</span>
+        </p>
+      </div>
+
+      <!-- Action Button -->
+      <button id="btn-splash-continue" class="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white transition-all duration-300 bg-gradient-to-r from-rose-500 to-pink-600 rounded-full shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 hover:scale-105 active:scale-95 focus:outline-none">
+        <span class="mr-2">Click to continue</span>
+        <i data-lucide="sparkles" class="w-5 h-5 transition-transform duration-300 group-hover:rotate-12"></i>
+      </button>
+
+    </section>
+
+    <!-- ==================== PAGE 1: FLOWERS ==================== -->
+    <section id="page-flowers" class="hidden w-full flex-col items-center justify-between text-center min-h-[85vh] transition-all duration-700 opacity-0 scale-95">
+      
+      <!-- Top Decor -->
+      <div class="pt-4">
+        <span class="px-4 py-1.5 rounded-full text-xs font-medium bg-pink-500/10 border border-pink-500/20 text-pink-300 inline-flex items-center gap-1.5">
+          <i data-lucide="flower-2" class="w-3.5 h-3.5"></i> Tap anywhere for flowers
+        </span>
+      </div>
+
+      <!-- Romantic Message Card -->
+      <div class="glass-card my-auto p-7 md:p-9 rounded-3xl text-center space-y-6 max-w-md border border-white/10 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-24 h-24 bg-pink-500/10 rounded-full blur-xl"></div>
+        
+        <i data-lucide="quote" class="w-8 h-8 text-rose-400/50 mx-auto"></i>
+
+        <p class="text-pink-100 text-base md:text-lg leading-relaxed font-light">
+          Hey, I thought you looked nice. I thought me and you could chat, I didn't know what to do to impress or <span class="italic font-normal text-rose-300">ko charme jwang</span> lol, but currently this the best I could come up with.
+        </p>
+
+        <p class="text-pink-100 text-base md:text-lg leading-relaxed font-light">
+          I thought about showing you flowers cause you deserve all the flowers in the world. 🌸✨
+        </p>
+      </div>
+
+      <!-- Shower Flower Trigger Button & Navigation -->
+      <div class="w-full flex flex-col items-center space-y-5 pb-4">
+        <!-- Interactive Burst Button with Arrow -->
+        <button id="btn-shower-flowers" class="flex flex-col items-center text-pink-300 hover:text-white transition-colors group">
+          <div class="w-12 h-12 rounded-full bg-pink-500/20 border border-pink-400/40 flex items-center justify-center mb-1 group-hover:bg-pink-500/30 group-hover:scale-110 transition-all shadow-md">
+            <i data-lucide="flower" class="w-6 h-6 text-pink-300 animate-spin" style="animation-duration: 8s;"></i>
+          </div>
+          <span class="text-xs tracking-wider uppercase opacity-80 group-hover:opacity-100 font-medium">Shower Flowers</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 mt-1 animate-arrow text-pink-400"></i>
+        </button>
+
+        <!-- Next Page Navigation Button -->
+        <button id="btn-go-page2" class="w-full max-w-xs py-3.5 px-6 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-medium flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg backdrop-blur-md">
+          <span>Next Page</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ==================== PAGE 2: BUTTERFLIES & EXAM WISHES ==================== -->
+    <section id="page-butterflies" class="hidden w-full flex-col items-center justify-between text-center min-h-[85vh] transition-all duration-700 opacity-0 scale-95">
+      
+      <!-- Top Decor -->
+      <div class="pt-4">
+        <span class="px-4 py-1.5 rounded-full text-xs font-medium bg-purple-500/10 border border-purple-500/20 text-purple-300 inline-flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Tap to unleash butterflies
+        </span>
+      </div>
+
+      <!-- Message Card 2 -->
+      <div class="glass-card my-auto p-7 md:p-9 rounded-3xl text-center space-y-6 max-w-md border border-white/10 relative overflow-hidden">
+        
+        <!-- Animated Butterfly Icon -->
+        <div class="w-14 h-14 mx-auto rounded-full bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300">
+          <i data-lucide="heart-handshake" class="w-7 h-7"></i>
+        </div>
+
+        <p class="text-purple-100 text-base md:text-lg leading-relaxed font-light">
+          I'm showing you butterflies cause that's how they fill my stomach when I see you online. I'd really like a shot at knowing you.
+        </p>
+
+        <!-- Exam Wish Block strictly as requested -->
+        <div class="pt-4 border-t border-white/10">
+          <h3 class="font-romantic text-4xl text-rose-300 drop-shadow">
+            All the best in your exams ✨
+          </h3>
+        </div>
+
+      </div>
+
+      <!-- Page 2 Action Buttons -->
+      <div class="w-full flex flex-col items-center space-y-4 pb-4">
+        <!-- Interactive Butterfly Burst Button -->
+        <button id="btn-shower-butterflies" class="flex flex-col items-center text-purple-300 hover:text-white transition-colors group">
+          <div class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-400/40 flex items-center justify-center mb-1 group-hover:bg-purple-500/30 group-hover:scale-110 transition-all shadow-md">
+            <i data-lucide="sparkles" class="w-6 h-6 text-purple-300"></i>
+          </div>
+          <span class="text-xs tracking-wider uppercase opacity-80 group-hover:opacity-100 font-medium">Release Magic</span>
+        </button>
+
+        <!-- Back to Page 1 Button -->
+        <button id="btn-back-page1" class="py-2.5 px-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-purple-200/80 font-medium flex items-center gap-1.5 transition-all">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Back to Flowers</span>
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JavaScript Logic & Animations -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // DOM Elements
+    const splashScreen = document.getElementById('splash-screen');
+    const pageFlowers = document.getElementById('page-flowers');
+    const pageButterflies = document.getElementById('page-butterflies');
+
+    const btnSplashContinue = document.getElementById('btn-splash-continue');
+    const btnShowerFlowers = document.getElementById('btn-shower-flowers');
+    const btnGoPage2 = document.getElementById('btn-go-page2');
+    const btnShowerButterflies = document.getElementById('btn-shower-butterflies');
+    const btnBackPage1 = document.getElementById('btn-back-page1');
+
+    // Canvas setup for ambient background animations
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    // Particle state tracking
+    let currentStage = 'splash'; // 'splash', 'flowers', 'butterflies'
+    const particles = [];
+
+    // Flower SVG Emojis & Symbols
+    const flowerSymbols = ['🌸', '🌺', '🌹', '🌷', '✨', '🌼'];
+    const butterflySymbols = ['🦋', '✨', '🌸', '💖'];
+
+    class Particle {
+      constructor(x, y, type = 'flower') {
+        this.x = x !== undefined ? x : Math.random() * width;
+        this.y = y !== undefined ? y : height + Math.random() * 50;
+        this.type = type;
+        
+        // Symbol selection
+        if (type === 'flower') {
+          this.symbol = flowerSymbols[Math.floor(Math.random() * flowerSymbols.length)];
+        } else if (type === 'butterfly') {
+          this.symbol = butterflySymbols[Math.floor(Math.random() * butterflySymbols.length)];
+        } else {
+          this.symbol = '✨';
+        }
+
+        this.size = Math.random() * 22 + 16;
+        this.speedY = -(Math.random() * 1.5 + 1.0);
+        this.speedX = (Math.random() - 0.5) * 1.2;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = (Math.random() - 0.5) * 2;
+        this.opacity = Math.random() * 0.7 + 0.3;
+        this.fadeRate = Math.random() * 0.003 + 0.001;
+        this.flutterPhase = Math.random() * Math.PI * 2;
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX + Math.sin(this.flutterPhase) * 0.8;
+        this.flutterPhase += 0.05;
+        this.rotation += this.rotationSpeed;
+        
+        // Natural fadeout near top
+        if (this.y < height * 0.15) {
+          this.opacity -= this.fadeRate * 3;
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.opacity);
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.font = `${this.size}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.symbol, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    // Spawn burst of particles from a specific point or full screen
+    function spawnBurst(x, y, count = 18, type = 'flower') {
+      for (let i = 0; i < count; i++) {
+        const pX = x !== undefined ? x + (Math.random() - 0.5) * 120 : Math.random() * width;
+        const pY = y !== undefined ? y + (Math.random() - 0.5) * 120 : height + 20;
+        const p = new Particle(pX, pY, type);
+        
+        // Burst velocity adjustments
+        p.speedY = -(Math.random() * 3.5 + 1.5);
+        p.speedX = (Math.random() - 0.5) * 4;
+        particles.push(p);
+      }
+    }
+
+    // Continuous ambient spawner loop
+    function ambientSpawner() {
+      if (particles.length < 35) {
+        if (currentStage === 'splash') {
+          particles.push(new Particle(undefined, undefined, 'flower'));
+        } else if (currentStage === 'flowers') {
+          particles.push(new Particle(undefined, undefined, 'flower'));
+        } else if (currentStage === 'butterflies') {
+          // Mixed butterflies and flowers
+          const type = Math.random() > 0.3 ? 'butterfly' : 'flower';
+          particles.push(new Particle(undefined, undefined, type));
+        }
+      }
+    }
+
+    setInterval(ambientSpawner, 350);
+
+    // Canvas animation loop
+    function renderLoop() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+
+        if (p.opacity <= 0 || p.y < -50) {
+          particles.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(renderLoop);
+    }
+    renderLoop();
+
+    // Screen Transitions Logic
+    function transitionScreen(fromEl, toEl, newStage) {
+      fromEl.classList.add('opacity-0', 'scale-95');
+      setTimeout(() => {
+        fromEl.classList.add('hidden');
+        fromEl.classList.remove('flex');
+        
+        toEl.classList.remove('hidden');
+        toEl.classList.add('flex');
+        
+        // Force reflow
+        void toEl.offsetWidth;
+        
+        toEl.classList.remove('opacity-0', 'scale-95');
+        toEl.classList.add('opacity-100', 'scale-100');
+        
+        currentStage = newStage;
+      }, 500);
+    }
+
+    // Button Listeners
+    btnSplashContinue.addEventListener('click', () => {
+      transitionScreen(splashScreen, pageFlowers, 'flowers');
+      spawnBurst(width / 2, height / 2, 30, 'flower');
+    });
+
+    btnGoPage2.addEventListener('click', () => {
+      transitionScreen(pageFlowers, pageButterflies, 'butterflies');
+      spawnBurst(width / 2, height / 2, 35, 'butterfly');
+    });
+
+    btnBackPage1.addEventListener('click', () => {
+      transitionScreen(pageButterflies, pageFlowers, 'flowers');
+    });
+
+    btnShowerFlowers.addEventListener('click', (e) => {
+      e.stopPropagation();
+      spawnBurst(width / 2, height * 0.7, 45, 'flower');
+    });
+
+    btnShowerButterflies.addEventListener('click', (e) => {
+      e.stopPropagation();
+      spawnBurst(width / 2, height * 0.7, 45, 'butterfly');
+    });
+
+    // Tap/Click anywhere on screen to spawn particles based on current active stage
+    window.addEventListener('click', (e) => {
+      // Avoid triggering when tapping interactive buttons
+      if (e.target.closest('button')) return;
+
+      const type = currentStage === 'butterflies' ? 'butterfly' : 'flower';
+      spawnBurst(e.clientX, e.clientY, 12, type);
+    });
+
+    // Touch support for mobile devices
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        if (e.target.closest('button')) return;
+        const type = currentStage === 'butterflies' ? 'butterfly' : 'flower';
+        spawnBurst(touch.clientX, touch.clientY, 10, type);
+      }
+    }, { passive: true });
+
+    // Shake Detection for Mobile Devices (Devicemotion API)
+    let lastX = null, lastY = null, lastZ = null;
+    let lastShakeTime = 0;
+
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', (event) => {
+        const acc = event.accelerationIncludingGravity;
+        if (!acc) return;
+
+        const currentTime = Date.now();
+        if (currentTime - lastShakeTime < 800) return; // Debounce shake events
+
+        if (lastX !== null && lastY !== null && lastZ !== null) {
+          const deltaX = Math.abs(acc.x - lastX);
+          const deltaY = Math.abs(acc.y - lastY);
+          const deltaZ = Math.abs(acc.z - lastZ);
+
+          if (deltaX + deltaY + deltaZ > 22) { // Shake threshold
+            lastShakeTime = currentTime;
+            const type = currentStage === 'butterflies' ? 'butterfly' : 'flower';
+            spawnBurst(width / 2, height / 2, 40, type);
+          }
+        }
+
+        lastX = acc.x;
+        lastY = acc.y;
+        lastZ = acc.z;
+      }, true);
+    }
+  </script>
+</body>
+</html>
